@@ -75,7 +75,7 @@ namespace WpfRxMvvmSample.Views {
 
         private void GetNames(object commandArg) {
             Observable.FromAsyncPattern<IList<string>>(_dataService.BeginGetNames, _dataService.EndGetNames)()
-                .SubscribeOn(SynchronizationContext.Current)
+                .ObserveOnDispatcher()
                 .Subscribe(
                     result => {
                         Names = new ObservableCollection<string>(result);
@@ -110,7 +110,7 @@ namespace WpfRxMvvmSample.Views {
 
             if(success) {
                 Observable.FromAsyncPattern<int, string>(_dataService.BeginGetName, _dataService.EndGetName)(index)
-                    .SubscribeOn(SynchronizationContext.Current)
+                    .ObserveOnDispatcher()
                     .Subscribe(
                         result => { SelectedName = result; },
                         ex => MessageBox.Show(ex.Message),

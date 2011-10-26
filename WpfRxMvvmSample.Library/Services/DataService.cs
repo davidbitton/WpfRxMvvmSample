@@ -7,38 +7,36 @@ namespace WpfRxMvvmSample.Library.Services {
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public class DataService : IDataService {
 
-        private readonly IList<string> _names = new[] { "Billy", "Joe", "Jim", "Bob" };
+        private static readonly IList<string> Names = new[] { "Billy", "Joe", "Jim", "Bob" };
 
-        private delegate IList<string> GetNamesInvoker();
-        private delegate string GetNameInvoker(int index);
+        private delegate IList<string> GetNamesInvokerDelegate();
+        private delegate string GetNameInvokerDelegate(int index);
 
-        private GetNamesInvoker _getNamesInvoker;
-        private GetNameInvoker _getNameInvoker;
+        private static readonly GetNamesInvokerDelegate GetNamesInvoker = GetNames;
+        private static readonly GetNameInvokerDelegate GetNameInvoker = GetName;
 
-        private IList<string> GetNames() {
-            return _names;
+        private static IList<string> GetNames() {
+            return Names;
         }
 
         public IAsyncResult BeginGetNames(AsyncCallback callback, object state) {
-            _getNamesInvoker = GetNames;
-            return _getNamesInvoker.BeginInvoke(callback, state);
+            return GetNamesInvoker.BeginInvoke(callback, state);
         }
 
         public IList<string> EndGetNames(IAsyncResult result) {
-            return _getNamesInvoker.EndInvoke(result);
+            return GetNamesInvoker.EndInvoke(result);
         }
 
-        private string GetName(int index) {
-            return _names[index];
+        private static string GetName(int index) {
+            return Names[index];
         }
 
         public IAsyncResult BeginGetName(int index, AsyncCallback callback, object state) {
-            _getNameInvoker = GetName;
-            return _getNameInvoker.BeginInvoke(index, callback, state);
+            return GetNameInvoker.BeginInvoke(index, callback, state);
         }
 
         public string EndGetName(IAsyncResult result) {
-            return _getNameInvoker.EndInvoke(result);
+            return GetNameInvoker.EndInvoke(result);
         }
     }
 }
